@@ -1,0 +1,20 @@
+<div class="sidebar">
+    <div class="nav_container">
+        <a href="/" class="nav_link <%= pageClass === 'active_home' ? 'active' : '' %>">
+            <img class="icon" src="/images/home.svg" alt="home">
+            Accueil
+        </a>
+        <a href="/clients" class="nav_link <%= pageClass === 'active_clients' ? 'active' : '' %>" id="clients-id">
+            <img class="icon" src="/images/users.svg" id="people" alt="clients">
+            Clients
+        </a>
+        <a href="/devis" class="nav_link <%= pageClass === 'active_devis' ? 'active' : '' %>">
+            <img class="icon" src="/images/devis.svg" alt="devis">
+            Devis
+        </a>
+        <a href="/factures" class="nav_link <%= pageClass === 'active_factures' ? 'active' : '' %>">
+            <img class="icon" src="/images/invoice.svg" alt="facture">
+            Factures
+        </a>
+    </div>
+</div>
