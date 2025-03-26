@@ -1,0 +1,9 @@
+<div class="text-container">
+    <h1><%= pageClass === 'clients' ? 'Clients' : pageClass === 'devis' ? 'Devis' : pageClass === 'factures' ? 'Factures' : '' %></h1>
+</div>
+<div class="content-container">
+    <a href="/<%= pageClass %>/new_<%= pageClass %>" class="new-button">
+        <img src="/images/plus.svg" alt="nouveau">
+        Nouveau
+    </a>
+</div>
