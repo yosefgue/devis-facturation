@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>Devis et Facturation</title>
     <link rel="stylesheet" href="/assets/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
 <%- include('partials/sidebar') %>
@@ -13,7 +16,46 @@
         Nouveau Devis
     </div>
     <div class="formcontainer">
-
+        <form action="">
+            <div class="step1">
+                <div class="detail-container">
+                    <label for="client">Client</label>
+                    <input type="text" id="client">
+                </div>
+                <div class="detail-container">
+                    <label for="numdevis">Numéro de devis</label>
+                    <input type="number" min="0" id="numdevis">
+                </div>
+                <div class="detail-container">
+                    <label for="date">Date</label>
+                    <input type="date" id="date">
+                </div>
+            </div>
+            <hr>
+            <div class="step2">
+                <div class="step2-container">
+                    <div class="detail-container">
+                        <label for="description">Description</label>
+                        <input type="text" id="description">
+                    </div>
+                    <div class="detail-container">
+                        <label for="quantite">Quantité</label>
+                        <input type="number" min="0" id="quantite">
+                    </div>
+                    <div class="detail-container">
+                        <label for="prix">Prix</label>
+                        <input type="number" min="0" id="prix">
+                    </div>
+                    <div class="detail-container">
+                        <label for="tva">TVA</label>
+                        <input type="number" min="0" id="tva">
+                    </div>
+                </div>
+                <button type="button">
+                    <img src="/images/plus-black.svg" alt="">
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 <script src="/assets/fornew.js"></script>

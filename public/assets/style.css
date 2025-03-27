@@ -1,7 +1,7 @@
 body {
     display: flex;
+    font-family: "Lexend", sans-serif;
     flex-direction: row;
-    font-family: rubik, sans-serif;
     margin: 0;
 }
 a {
@@ -15,6 +15,10 @@ a {
     padding: 10px;
     transition: 0.3s ease;
     user-select: none;
+}
+
+input, select, textarea, button {
+    font-family: inherit;
 }
 
 a:hover {
@@ -137,4 +141,65 @@ a img {
     border-radius: 10px;
     margin: 30px 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
+    padding: 10px 20px ;
 }
+.detail-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.step2-container {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+.formcontainer input {
+    border: none;
+    background-color: #F3F3F3;
+    border-radius: 10px;
+    height: 35px;
+    padding-left: 15px;
+}
+
+.step1 .detail-container {
+    margin: 15px 0;
+    width: 300px;
+}
+
+hr {
+    opacity: 0.3;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.step2-container > div:first-child {
+    width: 400px;
+}
+.step2-container div {
+    width: 100px;
+}
+.step2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+}
+.step2 button {
+    border: none;
+    background: none;
+    padding: 0;
+    height: 22px;
+    width: 22px;
+    margin: 15px 0;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.step2 button:hover {
+    transform: scale(1.2);
+}
+
+.step2 button img {
+    height: 22px;
+    width: 22px;
+}
+
