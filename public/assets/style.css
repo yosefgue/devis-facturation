@@ -50,7 +50,7 @@ a img {
     flex-direction: column;
     background-color: #171C42;
     width: 235px;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .content {
@@ -148,7 +148,7 @@ a img {
     flex-direction: column;
     gap: 10px;
 }
-.step2-container {
+.rows-container {
     display: flex;
     flex-direction: row;
     gap: 15px;
@@ -172,10 +172,10 @@ hr {
     margin-bottom: 15px;
 }
 
-.step2-container > div:first-child {
+.rows-container > div:first-child {
     width: 400px;
 }
-.step2-container div {
+.rows-container div {
     width: 100px;
 }
 .step2 {
@@ -183,6 +183,7 @@ hr {
     flex-direction: column;
     justify-content: center;
     align-items: start;
+    gap: 10px;
 }
 .step2 button {
     border: none;
@@ -195,7 +196,7 @@ hr {
     transition: transform 0.3s ease;
 }
 .step2 button:hover {
-    transform: scale(1.2);
+    transform: scale(1.1);
 }
 
 .step2 button img {
@@ -203,3 +204,16 @@ hr {
     width: 22px;
 }
 
+#closebutton {
+    align-self: end;
+    margin-top: 35px;
+}
+
+#submit {
+    font-weight: 700;
+    color: #2949FF;
+    height: 40px;
+    width: 100px;
+    border: 3px solid #2949FF;
+    border-radius: 10px;
+}

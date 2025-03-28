@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Devis et Facturation</title>
-    <link rel="stylesheet" href="/assets/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <%- include('partials/font') %>
 </head>
 <body>
 <%- include('partials/sidebar') %>
@@ -19,41 +16,42 @@
         <form action="">
             <div class="step1">
                 <div class="detail-container">
-                    <label for="client">Client</label>
-                    <input type="text" id="client">
+                    <label for="nom_client">Client</label>
+                    <input type="text" name="nom_client" maxlength="30" required>
                 </div>
                 <div class="detail-container">
-                    <label for="numdevis">Numéro de devis</label>
-                    <input type="number" min="0" id="numdevis">
+                    <label for="id_devis">Numéro de devis</label>
+                    <input type="number" min="0" name="id_devis" max="99999999" required>
                 </div>
                 <div class="detail-container">
-                    <label for="date">Date</label>
-                    <input type="date" id="date">
+                    <label for="date_devis">Date</label>
+                    <input type="date" name="date_devis" required>
                 </div>
             </div>
             <hr>
             <div class="step2">
-                <div class="step2-container">
+                <div class="rows-container" id="row1">
                     <div class="detail-container">
-                        <label for="description">Description</label>
-                        <input type="text" id="description">
+                        <label for="description1">Description</label>
+                        <input type="text" name="description1" maxlength="100" required>
                     </div>
                     <div class="detail-container">
                         <label for="quantite">Quantité</label>
-                        <input type="number" min="0" id="quantite">
+                        <input type="number" min="0" name="quantite" required>
                     </div>
                     <div class="detail-container">
                         <label for="prix">Prix</label>
-                        <input type="number" min="0" id="prix">
+                        <input type="number" min="0" name="prix" required>
                     </div>
                     <div class="detail-container">
                         <label for="tva">TVA</label>
-                        <input type="number" min="0" id="tva">
+                        <input type="number" min="0" name="tva" max="99" required>
                     </div>
                 </div>
-                <button type="button">
-                    <img src="/images/plus-black.svg" alt="">
+                <button type="button" class="plusbutton">
+                    <img src="/images/plus-black.svg" alt="plus">
                 </button>
+                <button type="button" id="submit"> Creer </button>
             </div>
         </form>
     </div>
