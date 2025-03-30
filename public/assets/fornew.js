@@ -54,11 +54,11 @@ selectsubmit.addEventListener("click", (e) => {
         form.reportValidity();
         return;
     }
-
+    //put data in native js object
     formData.forEach((value, key) => {
         data[key] = value;
     });
-
+    console.log(data)
     fetch("/devis/new_devis", {
         method: "POST",
         headers: {
