@@ -40,18 +40,39 @@
                         <input type="number" min="0" name="quantite1" required>
                     </div>
                     <div class="detail-container">
-                        <label for="prix">Prix</label>
+                        <label for="prix1">Prix</label>
                         <input type="number" min="0" name="prix1" required>
                     </div>
                     <div class="detail-container">
-                        <label for="tva">TVA</label>
+                        <label for="tva1">TVA</label>
                         <input type="number" min="0" name="tva1" max="99" required>
+                    </div>
+                    <div class="detail-container">
+                        <label for="total1">Total</label>
+                        <input type="number" name="total1" disabled>
                     </div>
                 </div>
                 <button type="button" class="plusbutton">
                     <img src="/images/plus-black.svg" alt="plus">
                 </button>
+            </div>
+            <div class="total-container">
                 <button type="button" id="submit"> Creer </button>
+                <div class="totalinfo">
+                    <div>
+                        <h4 class="totalinfotext">Total HT</h4>
+                        <h4 class="totalcontenttext" name="totalht"></h4>
+                    </div>
+                    <div>
+                        <h4 class="totalinfotext">TVA</h4>
+                        <h4 class="totalcontenttext" name="tvatotal"></h4>
+                    </div>
+                    <hr>
+                    <div>
+                        <h4 class="totalinfotext">Total TTC</h4>
+                        <h4 class="totalcontenttext" name="totalttc"></h4>
+                    </div>
+                </div>
             </div>
         </form>
     </div>

@@ -16,8 +16,10 @@ app.get("/clients", (req, res) => {
     res.render("clients", {pageClass: "clients", });
 })
 
-app.get("/devis", (req, res) => {
-    res.render("devis", {pageClass: "devis"});
+app.get("/devis", async (req, res) => {
+    const devis = await getdevis();
+    const produit = await getproduit();
+    res.render("devis", {pageClass: "devis", devis, produit});
 })
 
 app.get("/factures", (req, res) => {
@@ -37,20 +39,24 @@ app.post("/devis/new_devis", async (req, res) => {
     catch(err) {
         console.error("rows not inserted", err);
     }
-    // handle products
+    // insert products into database
     const productcount = Object.keys(req.body).filter(key => key.startsWith("description")).length;
+    const promiselist = [];
     for (let i = 1; i <= productcount; i++) {
         const description = req.body[`description${i}`];
         const prix = req.body[`prix${i}`];
         const quantite = req.body[`quantite${i}`]
         const tva = req.body[`tva${i}`];
-        try {
-            await insertproduct(description, quantite, prix, tva, id_devis);
-            console.log("product added successfully.")
-        }
-        catch(err) {
-            console.log("rows not inserted", err);
-        }
+        promiselist.push(insertproduct(description, quantite, prix, tva, id_devis));
+    }
+    try {
+        await Promise.all(promiselist);
+        res.send('success');
+        console.log("res sent");
+
+    }
+    catch(err) {
+        console.error(err);
     }
 });
 
@@ -73,6 +79,26 @@ async function insertproduct(description, quantite, prix, tva, id_devis) {
         console.error("database error", err);
     }
 };
+
+async function getdevis() {
+    try {
+        const devis = await pool.query('SELECT * FROM webapp_schema.devis');
+        return devis.rows;
+    }
+    catch (err) {
+        console.error("database error", err);
+    }
+}
+
+async function getproduit() {
+    try {
+        const produit = await pool.query('SELECT * FROM webapp_schema.produit');
+        return produit.rows;
+    }
+    catch (err) {
+        console.error("database error", err);
+    }
+}
 
 
 app.get("/factures/new_factures", (req, res) => {

@@ -9,7 +9,33 @@
 <body>
 <%- include('partials/sidebar') %>
 <div class="content">
-    <%- include('partials/pagetemp')%>
+    <div class="text-container">
+        <h1>Devis</h1>
+        <a href="/devis/new_devis" class="new-button">
+            <img src="/images/plus.svg" alt="nouveau">
+            Nouveau
+        </a>
+    </div>
+    <div class="devis-info">
+            <h5>Numero Devis</h5>
+            <h5> Client</h5>
+            <h5> Cree Le</h5>
+            <h5>Total TTC</h5>
+    </div>
+    <div class="content-container">
+        <% devis.forEach(item => { %>
+            <%
+                const date_devis = new Date(item.date_devis);
+                const formatdate = date_devis.toLocaleDateString('en-GB');
+            %>
+        <div class="devis-unit">
+                <h5><%= item.id_devis %></h5>
+                <h5><%= item.nom_client %></h5>
+                <h5><%= formatdate %></h5>
+                <h5><%= formatdate %></h5>
+        </div>
+        <% }) %>
+    </div>
 </div>
 </body>
 <script src="/assets/index.js"></script>
