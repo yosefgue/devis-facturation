@@ -10,7 +10,7 @@ let totalrow;
 const tva = 0.20;
 
 selectclose.addEventListener("click", (e) => {
-    window.location.href = '/devis';
+    window.location.href = '/factures';
 })
 
 //add total
@@ -101,7 +101,8 @@ selectsubmit.addEventListener("click", (e) => {
     data.total_ht = totalht;
     data.total_tva = totaltva;
     data.total_ttc = totalttc;
-    fetch("/devis/new_devis", {
+    console.log(data);
+    fetch("/factures/new_factures", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -110,7 +111,7 @@ selectsubmit.addEventListener("click", (e) => {
     })
         .then (res => {
             if (res.ok) {
-                window.location.href = '/devis'
+                window.location.href = '/factures'
             }
             else {
                 console.log('something went wrong!')

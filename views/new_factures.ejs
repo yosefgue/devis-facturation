@@ -8,14 +8,89 @@
 </head>
 <body>
 <%- include('partials/sidebar') %>
-<div class="content">
+<di<div class="content">
     <div class="new_text">
         <button type="button"><img src="/images/close_black.svg" alt="close"></button>
         Nouvelle Facture
     </div>
     <div class="formcontainer">
-
+        <form action="">
+            <div class="step1">
+                <div class="span">
+                    <div class="detail-container">
+                        <label>Numéro de facture</label>
+                        <input type="text" name="id_facture" maxlength="15" inputmode="numeric" oninput="this.value = this.value.replace(/\D/g, '')" required>
+                    </div>
+                    <div class="detail-container">
+                        <label>Description Facture</label>
+                        <input type="text" min="0" name="facture_description" required>
+                    </div>
+                </div>
+                <div class="span">
+                    <div class="detail-container">
+                        <label>Client</label>
+                        <input type="text" name="nom_client" maxlength="30" required>
+                    </div>
+                    <div class="detail-container">
+                        <label>ICE</label>
+                        <input type="text" name="ice" maxlength="15" inputmode="numeric" oninput="this.value = this.value.replace(/\D/g, '')" required>
+                    </div>
+                </div>
+                <div class="span">
+                    <div class="detail-container">
+                        <label>Date de facturation</label>
+                        <input type="date" name="date_facture" required>
+                    </div>
+                    <div class="detail-container">
+                        <label>Date d'échéance</label>
+                        <input type="date" name="date_echeance" required>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="step2">
+                <div class="rows-container" id="row1">
+                    <div class="detail-container">
+                        <label for="description1">Description</label>
+                        <input type="text" name="description1" maxlength="100" required>
+                    </div>
+                    <div class="detail-container">
+                        <label for="quantite1">Quantité</label>
+                        <input type="number" min="0" name="quantite1" max="999999999999999" required>
+                    </div>
+                    <div class="detail-container">
+                        <label for="prix1">Prix</label>
+                        <input type="number" min="0" name="prix1" max="999999999999999" required>
+                    </div>
+                    <div class="detail-container">
+                        <label for="total1">Total</label>
+                        <input type="number" name="total1" max="999999999999999" step="0.01">
+                    </div>
+                </div>
+                <button type="button" class="plusbutton">
+                    <img src="/images/plus-black.svg" alt="plus">
+                </button>
+            </div>
+            <div class="total-container">
+                <button type="button" id="submit"> Creer </button>
+                <div class="totalinfo">
+                    <div>
+                        <h4 class="totalinfotext">Total HT</h4>
+                        <h4 class="totalcontenttext" name="total_ht"></h4>
+                    </div>
+                    <div>
+                        <h4 class="totalinfotext">TVA</h4>
+                        <h4 class="totalcontenttext" name="total_tva"></h4>
+                    </div>
+                    <hr>
+                    <div>
+                        <h4 class="totalinfotext">Total TTC</h4>
+                        <h4 class="totalcontenttext" name="total_ttc"></h4>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
-<script src="/assets/fornew.js"></script>
+<script src="/assets/newfacture.js"></script>
 </body>

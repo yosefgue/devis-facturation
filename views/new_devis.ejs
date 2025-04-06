@@ -21,7 +21,7 @@
                 </div>
                 <div class="detail-container">
                     <label for="id_devis">Numéro de devis</label>
-                    <input type="number" min="0" name="id_devis" max="99999999" required>
+                    <input type="text" name="id_devis" maxlength="15" inputmode="numeric" oninput="this.value = this.value.replace(/\D/g, '')" required>
                 </div>
                 <div class="detail-container">
                     <label for="date_devis">Date</label>
@@ -44,12 +44,8 @@
                         <input type="number" min="0" name="prix1" required>
                     </div>
                     <div class="detail-container">
-                        <label for="tva1">TVA</label>
-                        <input type="number" min="0" name="tva1" max="99" required>
-                    </div>
-                    <div class="detail-container">
-                        <label for="total1">Total</label>
-                        <input type="number" name="total1" disabled>
+                        <label for="total1">Total HT</label>
+                        <input type="number" name="total1" step="0.01">
                     </div>
                 </div>
                 <button type="button" class="plusbutton">
@@ -61,16 +57,16 @@
                 <div class="totalinfo">
                     <div>
                         <h4 class="totalinfotext">Total HT</h4>
-                        <h4 class="totalcontenttext" name="totalht"></h4>
+                        <h4 class="totalcontenttext" name="total_ht"></h4>
                     </div>
                     <div>
-                        <h4 class="totalinfotext">TVA</h4>
-                        <h4 class="totalcontenttext" name="tvatotal"></h4>
+                        <h4 class="totalinfotext">TVA 20%</h4>
+                        <h4 class="totalcontenttext" name="total_tva"></h4>
                     </div>
                     <hr>
                     <div>
                         <h4 class="totalinfotext">Total TTC</h4>
-                        <h4 class="totalcontenttext" name="totalttc"></h4>
+                        <h4 class="totalcontenttext" name="total_ttc"></h4>
                     </div>
                 </div>
             </div>

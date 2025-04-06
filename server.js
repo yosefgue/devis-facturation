@@ -31,9 +31,10 @@ app.get("/devis/new_devis", (req, res) => {
 })
 
 app.post("/devis/new_devis", async (req, res) => {
-    const {nom_client, id_devis, date_devis} = req.body;
+    const {nom_client, id_devis, date_devis, total_ht, total_tva, total_ttc} = req.body;
+
     try {
-        await insertdevis(nom_client, id_devis, date_devis);
+        await insertdevis(nom_client, id_devis, date_devis, total_ht, total_tva, total_ttc);
         console.log("rows inserted successfully.");
     }
     catch(err) {
@@ -46,8 +47,8 @@ app.post("/devis/new_devis", async (req, res) => {
         const description = req.body[`description${i}`];
         const prix = req.body[`prix${i}`];
         const quantite = req.body[`quantite${i}`]
-        const tva = req.body[`tva${i}`];
-        promiselist.push(insertproduct(description, quantite, prix, tva, id_devis));
+        const total_ht = req.body[`total${i}`];
+        promiselist.push(insertproduct(description, quantite, prix, id_devis, total_ht));
     }
     try {
         await Promise.all(promiselist);
@@ -60,9 +61,9 @@ app.post("/devis/new_devis", async (req, res) => {
     }
 });
 
-async function insertdevis(nom_client, id_devis, date_devis) {
+async function insertdevis(nom_client, id_devis, date_devis, total_ht, total_tva, total_ttc) {
     try {
-        const result = await pool.query('insert into webapp_schema.devis (nom_client, id_devis, date_devis) values ($1, $2, $3) returning *', [nom_client, id_devis, date_devis]);
+        const result = await pool.query('insert into webapp_schema.devis (nom_client, id_devis, date_devis, total_ht, total_tva, total_ttc) values ($1, $2, $3, $4, $5, $6) returning *', [nom_client, id_devis, date_devis, total_ht, total_tva, total_ttc]);
         console.log(result.rows[0]);
     }
     catch (err) {
@@ -70,9 +71,9 @@ async function insertdevis(nom_client, id_devis, date_devis) {
     }
 }
 
-async function insertproduct(description, quantite, prix, tva, id_devis) {
+async function insertproduct(description, quantite, prix, id_devis, total_ht) {
     try {
-        const result = await pool.query('insert into webapp_schema.produit (description, quantite, prix, tva, id_devis) values ($1, $2, $3, $4, $5) returning * ', [description, quantite, prix, tva, id_devis]);
+        const result = await pool.query('insert into webapp_schema.produit (description, quantite, prix, id_devis, total_ht) values ($1, $2, $3, $4, $5) returning *', [description, quantite, prix, id_devis, total_ht]);
         console.log(result.rows[0]);
     }
     catch (err) {
@@ -100,10 +101,59 @@ async function getproduit() {
     }
 }
 
-
 app.get("/factures/new_factures", (req, res) => {
     res.render("new_factures", {pageClass: "new_factures"});
 })
+
+app.post("/factures/new_factures", async (req, res) => {
+    const {id_facture, facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc} = req.body;
+    try {
+        await insertfacture(id_facture, facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc);
+        console.log("rows inserted successfully.");
+    }
+    catch(err) {
+        console.error("rows not inserted", err);
+    }
+
+    // insert products into database
+    const productcount = Object.keys(req.body).filter(key => key.startsWith("description")).length;
+    const promiselist = [];
+    for (let i = 1; i <= productcount; i++) {
+        const description = req.body[`description${i}`];
+        const prix = req.body[`prix${i}`];
+        const quantite = req.body[`quantite${i}`]
+        const total_ht = req.body[`total${i}`];
+        promiselist.push(insertproduct_facture(description, quantite, prix, id_facture, total_ht));
+    }
+    try {
+        await Promise.all(promiselist);
+        res.send('success');
+        console.log("res sent");
+
+    }
+    catch(err) {
+        console.error(err);
+    }
+});
+async function insertfacture(id_facture, facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc) {
+    try {
+        const result = await pool.query('insert into webapp_schema.facture (id_facture, facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc) values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning *', [id_facture, facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc]);
+        console.log(result.rows[0]);
+    }
+    catch (err) {
+        console.error("database error", err);
+    }
+}
+async function insertproduct_facture(description, quantite, prix, id_facture, total_ht) {
+    try {
+        const result = await pool.query('insert into webapp_schema.produit (description, quantite, prix, id_facture, total_ht) values ($1, $2, $3, $4, $5) returning *', [description, quantite, prix, id_facture, total_ht]);
+        console.log(result.rows[0]);
+    }
+    catch (err) {
+        console.error("database error", err);
+    }
+};
+
 
 app.get("/clients/new_clients", (req, res) => {
     res.render("new_clients", {pageClass: "new_clients"});

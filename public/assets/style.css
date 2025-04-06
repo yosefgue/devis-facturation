@@ -245,6 +245,11 @@ h5 {
 .closebutton {
     align-self: end;
 }
+.span {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
 .step2 button:hover {
     transform: scale(1.1);
 }
