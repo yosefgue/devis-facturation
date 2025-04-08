@@ -56,7 +56,7 @@ a img {
     display: flex;
     flex-direction: column;
     background-color: #171C42;
-    width: 235px;
+    width: 215px;
     min-height: 100vh;
 }
 
@@ -123,7 +123,7 @@ a img {
     display: flex;
     flex-direction: row;
     margin-left: 10px;
-    gap: 50px;
+    gap: 40px;
 }
 h5 {
     margin: 0;
@@ -140,12 +140,15 @@ h5 {
     text-align: center;
 }
 
+
 .devis-unit {
     display: flex;
     flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
     padding: 20px 0 20px 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    gap: 50px;
+    gap: 40px;
 }
 .devis-unit:hover {
     background-color: #FCFCFC;
@@ -155,6 +158,29 @@ h5 {
     font-weight: 380;
     width: 150px;
     text-align: center;
+}
+.status_text {
+    border-radius: 10px;
+    color: white;
+}
+.devis-unit img {
+    height: 20px;
+    width: 20px;
+}
+.devis-unit button {
+    background: none;
+    border: none;
+    transition: ease 0.3s;
+    cursor: pointer;
+}
+.devis-unit button:hover {
+    transform: scale(1.2)
+}
+.buttons-container {
+    display: flex;
+    margin-left: auto;
+    gap: 20px;
+    padding: 0 20px;
 }
 
 /* new_devis css */
