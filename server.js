@@ -13,16 +13,43 @@ app.get("/", (req, res) => {
 })
 
 app.get("/clients", (req, res) => {
-    res.render("clients", {pageClass: "clients", });
+    res.render("clients", {pageClass: "clients"});
 })
 
 app.get("/devis", async (req, res) => {
-    const devis = await getdevis();
+    const devis = await getall('devis');
     res.render("devis", {pageClass: "devis", devis});
+})
+app.delete("/devis/:id", async (req, res) => {
+    try {
+        const getid = req.params.id;
+        await deleteproduit('devis', getid);
+        await deletex('devis', getid);
+        res.status(200).send('success');
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).send(err.message);
+    }
+
+})
+
+app.delete("/factures/:id", async (req, res) => {
+    try {
+        const getid = req.params.id;
+        await deleteproduit('facture', getid);
+        await deletex('facture', getid);
+        res.status(200).send('success');
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).send(err.message);
+    }
+
 })
 
 app.get("/factures", async (req, res) => {
-    const facture = await getfacture();
+    const facture = await getall('facture');
     res.render("factures", {pageClass: "factures", facture});
 })
 
@@ -30,12 +57,46 @@ app.get("/devis/new_devis", (req, res) => {
     res.render("new_devis", {pageClass: "new_devis"});
 })
 
+app.get("/devis/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const getdevis = await getxbyid('devis', id)
+        const getproduit = await getproduitbyid('devis', id)
+        res.json({devis: getdevis, produit: getproduit});
+    }
+    catch (error) {
+        console.error(error);
+    }
+})
+
+app.get("/clients/new_clients", (req, res) => {
+    res.render("new_clients", {pageClass: "new_clients"});
+})
+
+app.get("/factures/new_factures", (req, res) => {
+    res.render("new_factures", {pageClass: "new_factures"});
+})
+
+app.get("/factures/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const getfacture = await getxbyid('facture', id)
+        const getproduit = await getproduitbyid('facture', id)
+        res.json({facture: getfacture, produit: getproduit});
+        console.log(getfacture);
+        console.log(getproduit);
+    }
+    catch (error) {
+        console.error(error);
+    }
+})
+
 app.post("/devis/new_devis", async (req, res) => {
-    const {nom_client, date_devis, total_ht, total_tva, total_ttc, devis_description} = req.body;
+    const {nom_client, date_devis, total_ht, total_tva, total_ttc, devis_description, ice} = req.body;
     let id_devis;
 
     try {
-        id_devis = await insertdevis(nom_client, date_devis, total_ht, total_tva, total_ttc, devis_description);
+        id_devis = await insertdevis(nom_client, date_devis, total_ht, total_tva, total_ttc, devis_description, ice);
         console.log("rows inserted successfully.");
     }
     catch(err) {
@@ -61,10 +122,6 @@ app.post("/devis/new_devis", async (req, res) => {
         console.error(err);
     }
 });
-
-app.get("/factures/new_factures", (req, res) => {
-    res.render("new_factures", {pageClass: "new_factures"});
-})
 
 app.post("/factures/new_factures", async (req, res) => {
     const {facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc} = req.body;
@@ -98,9 +155,9 @@ app.post("/factures/new_factures", async (req, res) => {
     }
 });
 
-async function insertdevis(nom_client, date_devis, total_ht, total_tva, total_ttc, devis_description) {
+async function insertdevis(nom_client, date_devis, total_ht, total_tva, total_ttc, devis_description, ice) {
     try {
-        const result = await pool.query('insert into webapp_schema.devis (nom_client, date_devis, total_ht, total_tva, total_ttc, devis_description) values ($1, $2, $3, $4, $5, $6) returning *', [nom_client, date_devis, total_ht, total_tva, total_ttc, devis_description]);
+        const result = await pool.query('insert into webapp_schema.devis (nom_client, date_devis, total_ht, total_tva, total_ttc, devis_description, ice) values ($1, $2, $3, $4, $5, $6, $7) returning *', [nom_client, date_devis, total_ht, total_tva, total_ttc, devis_description, ice]);
         console.log(result.rows[0]);
         return result.rows[0].id_devis
     }
@@ -119,26 +176,49 @@ async function insertproduct(description, quantite, prix, id_devis, total_ht) {
     }
 };
 
-async function getdevis() {
+async function getall(table) {
+    const validatetables = ['devis', 'facture', 'produit', 'client'];
+    if(!validatetables.includes(table)) {
+        throw new Error('Table not found');
+    }
     try {
-        const devis = await pool.query('SELECT * FROM webapp_schema.devis');
-        return devis.rows;
+        const x = await pool.query(`SELECT * FROM webapp_schema.${table}`);
+        return x.rows;
+    }
+    catch (err) {
+        console.error("database error", err);
+    }
+}
+//delete
+async function deletex(table, id) {
+    const validtables = ['devis', 'facture', 'produit', 'client'];
+    if (!validtables.includes(table)) {
+        throw new Error(`table "${table}" not found`);
+    }
+    try {
+        const result = await pool.query(`delete from webapp_schema.${table} where id_${table} = $1`, [id])
+        return result.rows[0];
     }
     catch (err) {
         console.error("database error", err);
     }
 }
 
-async function getproduit() {
+async function deleteproduit(table, id) {
+    const validtables = ['devis', 'facture', 'produit', 'client'];
+    if (!validtables.includes(table)) {
+        throw new Error(`table not found`);
+    }
     try {
-        const produit = await pool.query('SELECT * FROM webapp_schema.produit');
-        return produit.rows;
+        const result = await pool.query(`delete from webapp_schema.produit where id_${table} = $1`, [id])
+        return result.rows[0];
     }
     catch (err) {
         console.error("database error", err);
     }
 }
-// functions to manipulate data
+
+// facture
 async function insertfacture(facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc) {
     try {
         const result = await pool.query('insert into webapp_schema.facture (facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc) values ($1, $2, $3, $4, $5, $6, $7, $8) returning *', [facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc]);
@@ -159,21 +239,32 @@ async function insertproduct_facture(description, quantite, prix, id_facture, to
         console.error("database error", err);
     }
 }
-
-async function getfacture() {
+async function getxbyid(table, id) {
+    const validtables = ['devis', 'facture']
+    if (!validtables.includes(table)) {
+        throw new Error(`table "${table}" not found`);
+    }
     try {
-        const facture = await pool.query('SELECT * FROM webapp_schema.facture')
-        return facture.rows
+        const x = await pool.query(`SELECT * from webapp_schema.${table} WHERE id_${table} = $1`, [id])
+        return x.rows[0];
     }
     catch (err) {
         console.error("database error", err);
     }
 }
-
-
-app.get("/clients/new_clients", (req, res) => {
-    res.render("new_clients", {pageClass: "new_clients"});
-})
+async function getproduitbyid(table, id) {
+    const validatetable = ['devis', 'facture']
+    if (!validatetable.includes(table)) {
+        throw new Error(`table "${table}" not found`);
+    }
+    try {
+        const produit = await pool.query(`SELECT * from webapp_schema.produit WHERE id_${table} = $1`, [id])
+        return produit.rows;
+    }
+    catch (err) {
+        console.error("database error", err);
+    }
+}
 
 app.listen(3000);
 

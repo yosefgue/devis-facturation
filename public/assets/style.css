@@ -91,6 +91,16 @@ a img {
     border-radius: 15px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
 }
+.content-container.centerempty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    margin: 10px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
+}
 
 .new-button {
     display: flex;
@@ -140,6 +150,28 @@ h5 {
     text-align: center;
 }
 
+.empty-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 350px;
+}
+.empty-div img {
+    height: 150px;
+    width: 150px;
+    opacity: 0.7;
+}
+.empty-div h2 {
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.7;
+    text-align: center;
+    margin: 0;
+    padding: 1px 0;
+}
+.empty-div h2:first-of-type {
+    margin-top: 20px;
+}
 
 .devis-unit {
     display: flex;
@@ -147,11 +179,12 @@ h5 {
     justify-content: flex-start;
     align-items: center;
     padding: 20px 0 20px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     gap: 40px;
+    cursor: pointer;
 }
 .devis-unit:hover {
-    background-color: #FCFCFC;
+    background-color: #FDFDFD;
 }
 
 .devis-unit h5 {
@@ -325,4 +358,99 @@ h5 {
 }
 #submit:hover {
     scale: 1.1;
+}
+
+/* devis showed in devis page */
+.main-info {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 10px 30px;
+    background-color: #F4F9FC;
+}
+.main-info h4 {
+    margin: 0;
+}
+.title-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 200px;
+    margin: 15px 0;
+}
+.title-header a {
+    all: revert;
+    font-size: 13px;
+    color: black;
+    font-weight: 400;
+}
+.title-header h4 {
+    font-size: 18px;
+    font-weight: 600;
+}
+.first-header {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+}
+.first-header h4 {
+    padding: 5px 0;
+    font-weight: 400;
+}
+.product-info {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0
+}
+.product-info > div {
+    display: flex;
+    flex-direction: row;
+}
+.product-info h5 {
+    width: 150px;
+}
+.product-headers {
+    margin: 10px 0;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+.product-headers h5 {
+    padding: 5px 0;
+    font-weight: 500;
+    text-align: center;
+
+}
+.product-details h5 {
+    padding: 5px 0;
+    font-weight: 400;
+    text-align: center;}
+.totalall {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-self: end;
+}
+.totalall div {
+    display: flex;
+    flex-direction: row;
+}
+.totalall h5 {
+    width: 100px;
+    padding: 5px 5px;
+    text-align: end;
+}
+.totalall div h5:first-child {
+    text-align: end;
+    font-weight: 500;
+    width: 60px;
+}
+.info-container {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+}
+#totalttc {
+    background-color: #CED7EC;
+    color: black;
+    border-radius: 10px;
 }

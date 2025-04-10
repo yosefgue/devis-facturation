@@ -31,7 +31,7 @@
             const formatdate = date_facture.toLocaleDateString('en-GB');
             const formatted_id = `F-${String(item.id_facture).padStart(4,'0')}`;
         %>
-            <div class="devis-unit">
+            <div class="devis-unit" data-id="<%= item.id_facture %>">
                 <h5><%= formatted_id %></h5>
                 <h5><%= item.nom_client %></h5>
                 <h5><%= formatdate %></h5>
@@ -39,8 +39,8 @@
                 <h5 class="status_text" style="<%= item.status === "non payé" ? "background-color:red" : item.status === "payé" ? "background-color:green" : "background-color:grey"%>" ><%= item.status %></h5>
                 <div class="buttons-container">
                     <button><img src="/images/view.svg" alt=""></button>
-                    <button><img src="/images/edit.svg" alt=""></button>
-                    <button><img src="/images/delete_forever.svg" alt=""></button>
+                    <button><img src="/images/edit.svg" alt="" data-id="<%= item.id_facture %>"></button>
+                    <button class="deletex" data-id="<%= item.id_facture %>" ><img src="/images/delete_forever.svg" alt=""></button>
                 </div>
             </div>
         <%})%>
@@ -50,5 +50,5 @@
 
 </div>
 </body>
-<script src="/assets/index.js"></script>
+<script src="/assets/facture.js"></script>
 </html>

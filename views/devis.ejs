@@ -29,20 +29,20 @@
                 const formatdate = date_devis.toLocaleDateString('en-GB');
                 const formatted_id = `D-${String(item.id_devis).padStart(4,'0')}`;
             %>
-        <div class="devis-unit">
+        <div class="devis-unit" data-id="<%= item.id_devis %>">
                 <h5><%= formatted_id %></h5>
                 <h5><%= item.nom_client %></h5>
                 <h5><%= formatdate %></h5>
                 <h5><%= item.total_ttc %></h5>
                 <div class="buttons-container">
                 <button><img src="/images/view.svg" alt=""></button>
-                <button><img src="/images/edit.svg" alt=""></button>
-                <button><img src="/images/delete_forever.svg" alt=""></button>
+                <button data-id="<%= item.id_devis %>"><img src="/images/edit.svg" alt=""></button>
+                <button data-id="<%= item.id_devis %>" class="deletex"><img src="/images/delete_forever.svg" alt=""></button>
                 </div>
         </div>
         <% }) %>
     </div>
 </div>
 </body>
-<script src="/assets/index.js"></script>
+<script src="/assets/devis.js"></script>
 </html>
