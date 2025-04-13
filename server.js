@@ -1,8 +1,9 @@
 const express = require('express');
-const path = require('path');
 const app = express();
 const pool = require("./db.js")
-const pg = require("pg");
+const puppeteer = require("puppeteer");
+const fs = require("fs");
+const path = require("path");
 app.use(express.static('public'));
 app.use(express.json())
 app.set("view engine", "ejs");
@@ -19,6 +20,112 @@ app.get("/clients", (req, res) => {
 app.get("/devis", async (req, res) => {
     const devis = await getall('devis');
     res.render("devis", {pageClass: "devis", devis});
+})
+
+app.get("/devis/download-pdf/:id", async (req, res) => {
+    const id = req.params.id
+    const devis = await getxbyid('devis', id)
+    const produit = await getproduitbyid('devis', id)
+    const date = new Date(devis.date_devis);
+    const formatdate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    const productrows = produit.map(el => {
+        return `
+        <div class="product-details">
+            <h4>${el.description}</h4>
+            <h4>${el.quantite}</h4>
+            <h4>${el.prix}</h4>
+            <h4>${el.total_ht}</h4>
+        </div>
+        `
+    }).join('');
+    const csscontent = fs.readFileSync(path.resolve(__dirname, 'public/assets/pdfstyle.css'), 'utf8');
+    const logoimg = fs.readFileSync(path.resolve(__dirname, 'public/images/company_logo.svg'), 'utf8')
+    const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <title>Devis</title>
+            <style>
+            ${csscontent}
+            </style>
+        </head>
+        <body>
+            <div class="main-container">
+                <div class="header">
+                    ${logoimg}
+                    <div>
+                        <h4>Devis N° ${devis.id_devis}</h4>
+                        <h4>Date:  ${formatdate}</h4>
+                    </div>
+                </div>
+                <div class="company-info">
+                    <h4>TIC Escort</h4>
+                    <h4>47, Av. Lalla Yacout. Etage 5 </h4>
+                    <h4>Casablanca</h4>
+                    <h4>Maroc</h4>
+                </div>
+                <div class="client-info">
+                    <div>
+                        <h4>Client:</h4>
+                        <h4>${devis.nom_client}</h4>
+                    </div>
+                    <div>
+                        <h4>ICE:</h4>
+                        <h4>${devis.ice}</h4>
+                    </div>
+                </div>
+                <div class="description">
+                    <h4>Description:</h4>
+                    <h4>${devis.devis_description}</h4>
+                </div>
+                <div class="product-main">
+                    <div class="product-info">
+                        <div class="product-headers">
+                            <h4>Description</h4>
+                            <h4>Quantite</h4>
+                            <h4>Prix Unitaire</h4>
+                            <h4>Total HT</h4>
+                        </div>
+                        ${productrows}
+                    </div>
+                    <div class="total">
+                        <div>
+                            <h4>Total ht</h4>
+                            <h4>${devis.total_ht}</h4>
+                        </div>
+                        <div>
+                            <h4>Total tva</h4>
+                            <h4>${devis.total_tva}</h4>
+                        </div>
+                        <div id="totalttc">
+                            <h4>Total ttc</h4>
+                            <h4>${devis.total_ttc}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <h4>E-mail contact@ticescort.com;</h4>
+                    <h4>Tél +212 633942013</h4>
+                </div>
+            </div>
+        </body>
+    </html>
+    `;
+    try {
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        await page.setContent(html);
+        const pdf = await page.pdf({ format: 'A4' });
+        await browser.close();
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename="devis-${id}.pdf"`,
+        });
+        res.end(pdf);
+    }
+    catch (e) {
+        console.error(e);
+    }
 })
 app.delete("/devis/:id", async (req, res) => {
     try {
@@ -88,6 +195,46 @@ app.get("/factures/:id", async (req, res) => {
     }
     catch (error) {
         console.error(error);
+    }
+})
+
+app.post("/devis/edit", async (req, res) => {
+    const {nom_client, devis_description, ice, date_devis, total_ht, total_tva, total_ttc, id_devis, ...objectsleft} = req.body;
+    try {
+        await modifydevis(nom_client, devis_description, ice, date_devis, total_ht, total_tva, total_ttc, id_devis)
+        res.status(200).send('success');
+    }
+    catch (error) {
+        console.error(error);
+    }
+    for (const key in objectsleft) {
+        const value = objectsleft[key];
+        try {
+            await modifyproduit(value.description, value.quantite, value.prix, value.total_ht, key)
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+})
+
+app.post("/factures/edit", async (req, res) => {
+    const {nom_client, facture_description, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc, id_facture, ...objectsleft} = req.body;
+    try {
+        await modifyfacture(nom_client, facture_description, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc, id_facture)
+        res.status(200).send('success');
+    }
+    catch (error) {
+        console.error(error);
+    }
+    for (const key in objectsleft) {
+        const value = objectsleft[key];
+        try {
+            await modifyproduit(value.description, value.quantite, value.prix, value.total_ht, key)
+        }
+        catch (error) {
+            console.error(error);
+        }
     }
 })
 
@@ -165,6 +312,31 @@ async function insertdevis(nom_client, date_devis, total_ht, total_tva, total_tt
         console.error("database error", err);
     }
 }
+async function modifydevis(nom_client, devis_description, ice, date_devis, total_ht, total_tva, total_ttc, id_devis) {
+    try {
+        const result = await pool.query('update webapp_schema.devis set nom_client = $1, devis_description = $2, ice = $3, date_devis = $4, total_ht = $5, total_tva = $6, total_ttc= $7 where id_devis = $8', [nom_client, devis_description, ice, date_devis, total_ht, total_tva, total_ttc, id_devis])
+    }
+    catch(err) {
+        console.error("database error", err);
+    }
+}
+
+async function modifyfacture(nom_client, facture_description, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc, id_facture) {
+    try {
+        const result = await pool.query('update webapp_schema.facture set nom_client = $1, facture_description = $2, ice = $3, date_facture = $4, date_echeance = $5 , total_ht = $6, total_tva = $7, total_ttc= $8 where id_facture = $9', [nom_client, facture_description, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc, id_facture])
+    }
+    catch(err) {
+        console.error("database error", err);
+    }
+}
+async function modifyproduit(description, quantite, prix, total_ht, row) {
+    try {
+        const result = await pool.query(`update webapp_schema.produit set description = $1, quantite = $2, prix = $3, total_ht = $4 where id_produit = $5`, [description, quantite, prix, total_ht, row])
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
 //devis
 async function insertproduct(description, quantite, prix, id_devis, total_ht) {
     try {
@@ -189,6 +361,7 @@ async function getall(table) {
         console.error("database error", err);
     }
 }
+
 //delete
 async function deletex(table, id) {
     const validtables = ['devis', 'facture', 'produit', 'client'];

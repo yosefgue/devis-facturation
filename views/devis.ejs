@@ -36,8 +36,8 @@
                 <h5><%= item.total_ttc %></h5>
                 <div class="buttons-container">
                 <button><img src="/images/view.svg" alt=""></button>
-                <button data-id="<%= item.id_devis %>"><img src="/images/edit.svg" alt=""></button>
-                <button data-id="<%= item.id_devis %>" class="deletex"><img src="/images/delete_forever.svg" alt=""></button>
+                <button class="editx" data-id="<%= item.id_devis %>"><img src="/images/edit.svg" alt=""></button>
+                <button class="deletex" data-id="<%= item.id_devis %>"><img src="/images/delete_forever.svg" alt=""></button>
                 </div>
         </div>
         <% }) %>

@@ -1,0 +1,124 @@
+html {
+    -webkit-print-color-adjust: exact;
+}
+body {
+    font-family: Lexend Deca Light, sans-serif;
+    font-size: 18px;
+}
+h4 {
+    margin: 0;
+    padding: 0;
+}
+svg {
+    width: 270px;
+}
+.main-container {
+    display: flex;
+    flex-direction: column;
+    margin: 60px;
+}
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: end;
+    margin-bottom: 20px;
+}
+.header div {
+
+}
+.header h4 {
+    font-size: 20px;
+    font-family: Lexend Deca Bold, sans-serif;
+}
+.company-info {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 70px;
+}
+.company-info h4 {
+    font-size: 16px;
+}
+.client-info {
+    display: flex;
+    align-self: center;
+    flex-direction: column;
+    margin-bottom: 30px;
+}
+.client-info h4 {
+}
+.client-info div {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+.description {
+    display: flex;
+    align-self: center;
+    flex-direction: row;
+    gap: 15px;
+    margin-bottom: 50px;
+}
+.product-main {
+    display: flex;
+    flex-direction: column;
+}
+.product-info {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid black;
+}
+.product-headers {
+    display: flex;
+    padding: 10px 0;
+    flex-direction: row;
+    background-color: black;
+}
+.product-headers h4 {
+    width: 150px;
+    text-align: center;
+    color: white;
+}
+.product-details {
+    display: flex;
+    flex-direction: row;
+}
+.product-details h4 {
+    width: 150px;
+    text-align: center;
+    padding: 4px 0;
+    border-bottom: 2px solid black;
+    border-right: 2px solid black;
+}
+.product-main {
+    width: 70vw;
+    align-self: center;
+}
+.total {
+    align-self: end;
+    margin: 50px 0;
+}
+.total div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+}
+.total h4 {
+    padding: 3px 10px;
+    text-align: end;
+}
+#totalttc {
+    border-radius: 10px;
+    border: 2px black solid;
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    align-self: center;
+    padding-bottom: 20px;
+}
+.footer h4 {
+    text-align: center;
+    padding: 3px 0;
+}

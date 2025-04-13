@@ -201,13 +201,21 @@ h5 {
     width: 20px;
 }
 .devis-unit button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    width: 20px;
+    height: 20px;
     background: none;
     border: none;
-    transition: ease 0.3s;
+    transition: ease 0.2s;
     cursor: pointer;
+    border-radius: 15px;
 }
 .devis-unit button:hover {
-    transform: scale(1.2)
+    background-color: #e9ecef;
 }
 .buttons-container {
     display: flex;
@@ -268,7 +276,7 @@ h5 {
 }
 
 .step1 .detail-container {
-    margin: 15px 0;
+    margin: 10px 0;
     width: 300px;
 }
 
@@ -400,7 +408,7 @@ h5 {
 .product-info {
     display: flex;
     flex-direction: column;
-    margin: 10px 0
+    margin: 10px 0;
 }
 .product-info > div {
     display: flex;
@@ -453,4 +461,40 @@ h5 {
     background-color: #CED7EC;
     color: black;
     border-radius: 10px;
+}
+/* */
+
+.first-header input {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    margin: 2px 0;
+    width: 300px;
+    font-size: 15px;
+    padding: 5px;
+    border-radius: 5px;
+}
+.product-details input {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 5px;
+    margin: 2px 2px;
+    min-width: 93px;
+    border-radius: 5px;
+    font-weight: 400;
+    text-align: center;
+}
+#submitedit {
+    cursor: pointer;
+    width: 90px;
+    padding: 5px 0;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    background-color: black;
+    transition: ease 0.3s;
+}
+#submitedit:hover {
+    opacity: 0.8;
+}
+#devisdownload {
+    cursor: pointer;
+    text-decoration: underline;
 }
