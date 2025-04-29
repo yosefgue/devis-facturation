@@ -10,7 +10,7 @@ h4 {
     padding: 0;
 }
 svg {
-    width: 270px;
+    width: 200px;
 }
 .main-container {
     display: flex;
@@ -29,7 +29,7 @@ svg {
 }
 .header h4 {
     font-size: 20px;
-    font-family: Lexend Deca Bold, sans-serif;
+    font-family: Lexend Deca Regular, sans-serif;
 }
 .company-info {
     display: flex;

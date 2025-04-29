@@ -98,6 +98,34 @@ selectcontentcontainer.addEventListener("click", (e) => {
                 URL.revokeObjectURL(url);
             })
     }
+    if (e.target.matches("#convertir")) {
+        const selection = e.target
+        const getid = selection.dataset.id_convertir
+        fetch(`/devis/convert/${getid}`)
+            .then (res => {
+                if (res.ok) {
+                    console.log('cool')
+                    html = `
+                    <div class="success">
+                        <h5>converti avec succès</h5>
+                    </div>
+                    `
+                    const selectbody = document.querySelector("body")
+                    selectbody.insertAdjacentHTML('beforeend', html);
+                    setTimeout(() => document.querySelector(".success")?.remove(), 1000);
+                }
+                else {
+                    html = `
+                    <div class="fail">
+                        <h5>Ce devis a déjà été converti</h5>
+                    </div>
+                    `
+                    const selectbody = document.querySelector("body")
+                    selectbody.insertAdjacentHTML('beforeend', html);
+                    setTimeout(() => document.querySelector(".fail")?.remove(), 1500);
+                }
+            })
+    }
 })
 
 selectedit.forEach(el => {
@@ -235,6 +263,7 @@ selectalldevis.forEach(el => {
                         <div class="title-header">
                             <h4>Devis N° ${formatted_id}</h4>
                             <a data-id_download="${data.devis.id_devis}" id="devisdownload">Telecharger PDF</a>
+                            <a data-id_convertir="${data.devis.id_devis}" id="convertir"> Convertir en facture </a>
                         </div>
                         <div class="first-header">
                             <h4>${data.devis.nom_client}</h4>

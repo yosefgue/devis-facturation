@@ -70,7 +70,6 @@ selectcontentcontainer.addEventListener("click", (e) => {
             }
             data[id][name] = value;
         })
-        console.log(data)
         fetch("/factures/edit", {
             method: "POST",
             headers: {"content-type": "application/json"},
@@ -82,6 +81,42 @@ selectcontentcontainer.addEventListener("click", (e) => {
                 }
             })
     }
+
+    if (e.target.matches("#facturedownload")) {
+        const selection = e.target
+        const getid = selection.dataset.id_download
+        e.preventDefault();
+        fetch(`factures/download-pdf/${getid}`)
+            .then(res => res.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = `facture-${getid}.pdf`;
+                link.click();
+                URL.revokeObjectURL(url);
+            })
+    }
+    if (e.target.matches("#changestatus")) {
+        const select = document.querySelector("#changestatus");
+        if (!select.dataset.listenerAdded) {
+            select.addEventListener("change", (e) => {
+                const data = {status: select.value}
+                fetch(`/factures/status/${select.dataset.status_id}`, {
+                    method: "PUT",
+                    headers: {"content-type": "application/json"},
+                    body: JSON.stringify({data})
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            location.reload()
+                        }
+                    })
+            });
+            select.dataset.listenerAdded = "true";
+        }
+    }
+
 })
 
 selectedit.forEach(el => {
@@ -222,7 +257,13 @@ selectallfacture.forEach(el => {
                 <div class="main-info">
                     <div class="title-header">
                         <h4>Facture N° ${formatted_id}</h4>
-                        <a data-id_facture-downlaod="${data.facture.id_facture}">Telecharger PDF</a>
+                        <select name="changestatus" id="changestatus" data-status_id="${data.facture.id_facture}"}>
+                            <option value="" disabled selected>Changer statut</option>
+                            <option value="non payé">non payé</option>
+                            <option value="payé">payé</option>
+                            <option value="annulé">annulé</option>
+                        </select>
+                        <a data-id_download="${data.facture.id_facture}" id="facturedownload" >Telecharger PDF</a>
                     </div>
                     <div class="first-header">
                         <h4>${data.facture.nom_client}</h4>

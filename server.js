@@ -4,6 +4,7 @@ const pool = require("./db.js")
 const puppeteer = require("puppeteer");
 const fs = require("fs");
 const path = require("path");
+const {get} = require("axios");
 app.use(express.static('public'));
 app.use(express.json())
 app.set("view engine", "ejs");
@@ -22,12 +23,33 @@ app.get("/devis", async (req, res) => {
     res.render("devis", {pageClass: "devis", devis});
 })
 
+app.get("/devis/convert/:id", async (req, res) => {
+    const id = req.params.id;
+    try {
+        const devis = await getxbyid('devis', id)
+        const {nom_client, devis_description, ice, date_devis, total_ht, total_tva, total_ttc, id_devis} = devis
+        const checkdevis = await checkifdevisexists(id_devis);
+        if (checkdevis.length > 0) {
+            res.status(409).send('devis already exists')
+        }
+        else {
+            const result = await insertfacture(devis_description, nom_client, ice, date_devis, null, total_ht, total_tva, total_ttc, id_devis)
+            await updateproductid(id_devis, result)
+            res.status(200).send('converted successfully')
+        }
+    }
+    catch (error) {
+        console.error(error);
+    }
+})
+
 app.get("/devis/download-pdf/:id", async (req, res) => {
     const id = req.params.id
     const devis = await getxbyid('devis', id)
     const produit = await getproduitbyid('devis', id)
     const date = new Date(devis.date_devis);
-    const formatdate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    const formatdate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+    const formatted_id = `D-${String(devis.id_devis).padStart(4,'0')}`;
     const productrows = produit.map(el => {
         return `
         <div class="product-details">
@@ -39,7 +61,7 @@ app.get("/devis/download-pdf/:id", async (req, res) => {
         `
     }).join('');
     const csscontent = fs.readFileSync(path.resolve(__dirname, 'public/assets/pdfstyle.css'), 'utf8');
-    const logoimg = fs.readFileSync(path.resolve(__dirname, 'public/images/company_logo.svg'), 'utf8')
+    const logoimg = fs.readFileSync(path.resolve(__dirname, 'public/images/company-logo.svg'), 'utf8')
     const html = `
     <!DOCTYPE html>
     <html lang="en">
@@ -54,7 +76,7 @@ app.get("/devis/download-pdf/:id", async (req, res) => {
                 <div class="header">
                     ${logoimg}
                     <div>
-                        <h4>Devis N° ${devis.id_devis}</h4>
+                        <h4>Devis N° ${formatted_id}</h4>
                         <h4>Date:  ${formatdate}</h4>
                     </div>
                 </div>
@@ -94,7 +116,7 @@ app.get("/devis/download-pdf/:id", async (req, res) => {
                             <h4>${devis.total_ht}</h4>
                         </div>
                         <div>
-                            <h4>Total tva</h4>
+                            <h4>Total tva 20%</h4>
                             <h4>${devis.total_tva}</h4>
                         </div>
                         <div id="totalttc">
@@ -127,6 +149,117 @@ app.get("/devis/download-pdf/:id", async (req, res) => {
         console.error(e);
     }
 })
+
+app.get("/factures/download-pdf/:id", async (req, res) => {
+    const id = req.params.id
+    const facture = await getxbyid('facture', id)
+    const produit = await getproduitbyid('facture', id)
+    const date = new Date(facture.date_facture);
+    const date_echeance = new Date(facture.date_echeance);
+    const formatdate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+    const formatdate_echeance = `${String(date_echeance.getDate()).padStart(2, '0')}/${String(date_echeance.getMonth() + 1).padStart(2, '0')}/${date_echeance.getFullYear()}`;
+    const formatted_id = `F-${String(facture.id_facture).padStart(4,'0')}`;
+    const productrows = produit.map(el => {
+        return `
+        <div class="product-details">
+            <h4>${el.description}</h4>
+            <h4>${el.quantite}</h4>
+            <h4>${el.prix}</h4>
+            <h4>${el.total_ht}</h4>
+        </div>
+        `
+    }).join('');
+    const csscontent = fs.readFileSync(path.resolve(__dirname, 'public/assets/pdfstyle.css'), 'utf8');
+    const logoimg = fs.readFileSync(path.resolve(__dirname, 'public/images/company-logo.svg'), 'utf8')
+    const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <title>Facture</title>
+            <style>
+            ${csscontent}
+            </style>
+        </head>
+        <body>
+            <div class="main-container">
+                <div class="header">
+                    ${logoimg}
+                    <div>
+                        <h4>Facture N° ${formatted_id}</h4>
+                        <h4>Date:  ${formatdate}</h4>
+                        <h4>Date Echeance:  ${formatdate_echeance}</h4>
+                    </div>
+                </div>
+                <div class="company-info">
+                    <h4>TIC Escort</h4>
+                    <h4>47, Av. Lalla Yacout. Etage 5 </h4>
+                    <h4>Casablanca</h4>
+                    <h4>Maroc</h4>
+                </div>
+                <div class="client-info">
+                    <div>
+                        <h4>Client:</h4>
+                        <h4>${facture.nom_client}</h4>
+                    </div>
+                    <div>
+                        <h4>ICE:</h4>
+                        <h4>${facture.ice}</h4>
+                    </div>
+                </div>
+                <div class="description">
+                    <h4>Description:</h4>
+                    <h4>${facture.facture_description}</h4>
+                </div>
+                <div class="product-main">
+                    <div class="product-info">
+                        <div class="product-headers">
+                            <h4>Description</h4>
+                            <h4>Quantite</h4>
+                            <h4>Prix Unitaire</h4>
+                            <h4>Total HT</h4>
+                        </div>
+                        ${productrows}
+                    </div>
+                    <div class="total">
+                        <div>
+                            <h4>Total ht</h4>
+                            <h4>${facture.total_ht}</h4>
+                        </div>
+                        <div>
+                            <h4>Total tva 20%</h4>
+                            <h4>${facture.total_tva}</h4>
+                        </div>
+                        <div id="totalttc">
+                            <h4>Total ttc</h4>
+                            <h4>${facture.total_ttc}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <h4>E-mail contact@ticescort.com;</h4>
+                    <h4>Tél +212 633942013</h4>
+                </div>
+            </div>
+        </body>
+    </html>
+    `;
+    try {
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        await page.setContent(html);
+        const pdf = await page.pdf({ format: 'A4' });
+        await browser.close();
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename="facture-${id}.pdf"`,
+        });
+        res.end(pdf);
+    }
+    catch (e) {
+        console.error(e);
+    }
+})
+
 app.delete("/devis/:id", async (req, res) => {
     try {
         const getid = req.params.id;
@@ -274,7 +407,7 @@ app.post("/factures/new_factures", async (req, res) => {
     const {facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc} = req.body;
     let id_facture;
     try {
-        id_facture = await insertfacture(facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc);
+        id_facture = await insertfacture(facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc, null);
         console.log("rows inserted successfully.");
     }
     catch(err) {
@@ -301,6 +434,27 @@ app.post("/factures/new_factures", async (req, res) => {
         console.error(err);
     }
 });
+
+app.put("/factures/status/:id", async (req, res) => {
+    const id = req.params.id;
+    const getstatus = req.body.data.status
+    try {
+        await updatefacturestatus(getstatus, id);
+        res.status(200).send('success');
+    }
+    catch(err) {
+        console.error(err);
+    }
+})
+
+async function updatefacturestatus(status, id) {
+    try {
+        await pool.query('update webapp_schema.facture set status = $1 where id_facture =$2', [status, id])
+    }
+    catch(err) {
+        console.error(err);
+    }
+}
 
 async function insertdevis(nom_client, date_devis, total_ht, total_tva, total_ttc, devis_description, ice) {
     try {
@@ -392,10 +546,9 @@ async function deleteproduit(table, id) {
 }
 
 // facture
-async function insertfacture(facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc) {
+async function insertfacture(facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc, id_devis) {
     try {
-        const result = await pool.query('insert into webapp_schema.facture (facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc) values ($1, $2, $3, $4, $5, $6, $7, $8) returning *', [facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc]);
-        console.log(result.rows[0]);
+        const result = await pool.query('insert into webapp_schema.facture (facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc, id_devis) values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning *', [facture_description, nom_client, ice, date_facture, date_echeance, total_ht, total_tva, total_ttc, id_devis]);
         return result.rows[0].id_facture
 
     }
@@ -405,8 +558,7 @@ async function insertfacture(facture_description, nom_client, ice, date_facture,
 }
 async function insertproduct_facture(description, quantite, prix, id_facture, total_ht) {
     try {
-        const result = await pool.query('insert into webapp_schema.produit (description, quantite, prix, id_facture, total_ht) values ($1, $2, $3, $4, $5) returning *', [description, quantite, prix, id_facture, total_ht]);
-        console.log(result.rows[0]);
+        await pool.query('insert into webapp_schema.produit (description, quantite, prix, id_facture, total_ht) values ($1, $2, $3, $4, $5) returning *', [description, quantite, prix, id_facture, total_ht]);
     }
     catch (err) {
         console.error("database error", err);
@@ -425,6 +577,22 @@ async function getxbyid(table, id) {
         console.error("database error", err);
     }
 }
+async function checkifdevisexists(id) {
+    try {
+        const result = await pool.query('SELECT 1 FROM webapp_schema.facture WHERE id_devis = $1 LIMIT 2', [id])
+        console.log(result);
+        return result.rows;
+    }
+    catch (err) {
+        console.error("database error", err);
+    }
+}
+
+async function updateproductid(id_devis, id_facture) {
+    const result = await pool.query('update webapp_schema.produit set id_facture = $1 where id_devis = $2', [id_facture, id_devis])
+    return result.rows[0];
+}
+
 async function getproduitbyid(table, id) {
     const validatetable = ['devis', 'facture']
     if (!validatetable.includes(table)) {
