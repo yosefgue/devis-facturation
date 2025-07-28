@@ -1,14 +1,6 @@
 <div class="sidebar">
     <div class="nav_container">
         <img src="/images/company-logo.svg" id="complogo">
-        <a href="/" class="nav_link <%= pageClass === 'home' ? 'active' : '' %>">
-            <img class="icon" src="/images/home.svg" alt="home">
-            Accueil
-        </a>
-        <a href="/clients" class="nav_link <%= pageClass === 'clients' ? 'active' : '' %>" id="clients-id">
-            <img class="icon" src="/images/users.svg" id="people" alt="clients">
-            Clients
-        </a>
         <a href="/devis" class="nav_link <%= pageClass === 'devis' || pageClass ==='new_devis' ? 'active' : '' %>">
             <img class="icon" src="/images/devis.svg" alt="devis">
             Devis

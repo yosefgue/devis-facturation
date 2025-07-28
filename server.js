@@ -11,11 +11,7 @@ app.set("view engine", "ejs");
 
 
 app.get("/", (req, res) => {
-    res.render("home", {pageClass: "home"});
-})
-
-app.get("/clients", (req, res) => {
-    res.render("clients", {pageClass: "clients"});
+    res.redirect('/devis');
 })
 
 app.get("/devis", async (req, res) => {
